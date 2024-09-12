@@ -6,6 +6,6 @@ This repository contains implementations of two optimization algorithms for solv
 
 - `simulated_annealing.py`: Contains the implementation of the Simulated Annealing algorithm.
 - `genetic_algorithm.py`: Contains the implementation of the Genetic Algorithm.
-- `examples/run_examples.py`: Provides an example script to run both algorithms and compare results.
+- `run_examples.py`: Provides an example script to run both algorithms and compare results.
 - `requirements.txt`: Lists the Python dependencies required for the project.
 
