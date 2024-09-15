@@ -1,67 +1,69 @@
+import numpy as np
 import random
 
-def generate_initial_population(size):
-    return [list(range(8)) for _ in range(size)]
+# Parameters
+POPULATION_SIZE = 100
+MUTATION_RATE = 0.01
+GENERATIONS = 1000
 
-def fitness_function(state):
-    return -cost_function(state)
+# Function to create a random individual (solution)
+def create_individual():
+    return list(np.random.permutation(8))
 
-def select_parents(population, fitnesses):
-    total_fitness = sum(fitnesses)
-    pick1 = random.uniform(0, total_fitness)
-    pick2 = random.uniform(0, total_fitness)
+# Function to calculate the fitness of an individual
+def fitness(individual):
+    # Number of pairs of queens that are attacking each other
+    clashes = 0
+    for i in range(8):
+        for j in range(i + 1, 8):
+            if individual[i] == individual[j] or \
+               abs(individual[i] - individual[j]) == abs(i - j):
+                clashes += 1
+    return 28 - clashes  # Maximum fitness is 28 (no clashes)
 
-    def roulette_wheel_selection():
-        current = 0
-        for i, fitness in enumerate(fitnesses):
-            current += fitness
-            if current > pick1:
-                return i
+# Function to select parents based on fitness
+def select_parents(population):
+    sorted_population = sorted(population, key=fitness, reverse=True)
+    return sorted_population[:2]  # Select top 2 individuals
 
-    parent1 = roulette_wheel_selection()
-    parent2 = roulette_wheel_selection()
-
-    return population[parent1], population[parent2]
-
+# Function to crossover (reproduce) two parents to create a child
 def crossover(parent1, parent2):
     point = random.randint(1, 7)
-    child1 = parent1[:point] + parent2[point:]
-    child2 = parent2[:point] + parent1[point:]
-    return child1, child2
+    child = parent1[:point] + [x for x in parent2 if x not in parent1[:point]]
+    return child
 
-def mutate(state):
-    i, j = random.sample(range(8), 2)
-    state[i], state[j] = state[j], state[i]
+# Function to mutate an individual
+def mutate(individual):
+    if random.random() < MUTATION_RATE:
+        i, j = random.sample(range(8), 2)
+        individual[i], individual[j] = individual[j], individual[i]
 
+# Main genetic algorithm function
 def genetic_algorithm():
-    population_size = 100
-    generations = 1000
-    mutation_rate = 0.1
+    population = [create_individual() for _ in range(POPULATION_SIZE)]
+    for generation in range(GENERATIONS):
+        population = sorted(population, key=fitness, reverse=True)
+        if fitness(population[0]) == 28:
+            print(f"Solution found in generation {generation}: {population[0]}")
+            return population[0]
 
-    population = generate_initial_population(population_size)
-
-    for _ in range(generations):
-        fitnesses = [fitness_function(state) for state in population]
         new_population = []
-
-        while len(new_population) < population_size:
-            parent1, parent2 = select_parents(population, fitnesses)
-            child1, child2 = crossover(parent1, parent2)
-
-            if random.uniform(0, 1) < mutation_rate:
-                mutate(child1)
-            if random.uniform(0, 1) < mutation_rate:
-                mutate(child2)
-
-            new_population.extend([child1, child2])
+        for _ in range(POPULATION_SIZE // 2):
+            parents = select_parents(population)
+            child1 = crossover(parents[0], parents[1])
+            child2 = crossover(parents[1], parents[0])
+            mutate(child1)
+            mutate(child2)
+            new_population.append(child1)
+            new_population.append(child2)
 
         population = new_population
 
-    best_state = max(population, key=lambda state: fitness_function(state))
-    best_fitness = fitness_function(best_state)
-    return best_state, best_fitness
+    print("No optimal solution found.")
+    return None
 
+# Run the genetic algorithm
 if __name__ == "__main__":
-    ga_solution, ga_fitness = genetic_algorithm()
-    print("GA Solution:", ga_solution)
-    print("GA Fitness:", ga_fitness)
+    solution = genetic_algorithm()
+    if solution:
+        print("Solution:", solution)
