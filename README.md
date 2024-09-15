@@ -8,7 +8,7 @@ This repository contains implementations of two optimization algorithms for solv
 - `genetic_algorithm.py`: Contains the implementation of the Genetic Algorithm.
 
 
-##**Simulated Annealing Algorithm for 8-Queens**
+## Simulated Annealing Algorithm for 8-Queens
 
 1. Initialization:
 Start with a randomly generated state (solution).
@@ -24,7 +24,7 @@ Cooling: Gradually decrease the temperature over iterations.
 Repeat the process until a stopping criterion is met (e.g., a fixed number of iterations or convergence to a satisfactory solution).
 
 
-##**Genetic Algorithm for 8-Queens**
+## Genetic Algorithm for 8-Queens
 
 1. Initialization:
 Create Initial Population: Generate a set of random solutions (individuals). Each solution is a permutation of the numbers 0 to 7, representing the positions of the queens.
